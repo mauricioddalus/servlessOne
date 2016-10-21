@@ -1,0 +1,53 @@
+{
+    "resource": "/v1/items",
+    "path": "/v1/items",
+    "httpMethod": "GET",
+    "headers": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate, sdch, br",
+        "Accept-Language": "en-US,en;q=0.8,pt;q=0.6",
+        "Cache-Control": "no-cache",
+        "CloudFront-Forwarded-Proto": "https",
+        "CloudFront-Is-Desktop-Viewer": "true",
+        "CloudFront-Is-Mobile-Viewer": "false",
+        "CloudFront-Is-SmartTV-Viewer": "false",
+        "CloudFront-Is-Tablet-Viewer": "false",
+        "CloudFront-Viewer-Country": "BR",
+        "Host": "tpx8el7z26.execute-api.us-east-1.amazonaws.com",
+        "Postman-Token": "aa02ee83-2fcc-2d7e-e6d2-e94d0bd782c0",
+        "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.116 Safari/537.36",
+        "Via": "1.1 355fb999cc878ee5cd854a5825d66b34.cloudfront.net (CloudFront)",
+        "X-Amz-Cf-Id": "6W-w_dWHRk-GWQ-nTUaPWJSS57VvRYnjWqNh0yH7meQ2uYTd1AWutg==",
+        "X-Forwarded-For": "187.11.124.242, 205.251.221.99",
+        "X-Forwarded-Port": "443",
+        "X-Forwarded-Proto": "https"
+    },
+    "body": null,
+    "queryStringParameters": null,
+    "pathParameters": null,
+    "stageVariables": {
+        "db_test": "test-table"
+    },
+    "requestContext": {
+        "accountId": "063951657828",
+        "resourceId": "ycu3ja",
+        "stage": "dev",
+        "requestId": "769edf68-9780-11e6-9324-834c4800e332",
+        "identity": {
+            "cognitoIdentityPoolId": null,
+            "accountId": null,
+            "cognitoIdentityId": null,
+            "caller": null,
+            "apiKey": null,
+            "sourceIp": "187.11.124.242",
+            "cognitoAuthenticationType": null,
+            "cognitoAuthenticationProvider": null,
+            "userArn": null,
+            "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.116 Safari/537.36",
+            "user": null
+        },
+        "resourcePath": "/v1/items",
+        "httpMethod": "GET",
+        "apiId": "tpx8el7z26"
+    }
+}

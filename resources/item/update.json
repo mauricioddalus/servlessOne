@@ -1,0 +1,60 @@
+{
+  "body": {
+      "nome" : "leonardo",
+      "idade": 30
+  },
+  "queryStringParameters": null,
+  "pathParameters": {
+      "id": "44454e75-ac40-415f-b154-3dee80891a70"
+  },
+  "stageVariables": {
+    "db_test": "test-table"
+  },
+  "resource": "/v1/item",
+  "path": "/v1/item",
+  "httpMethod": "POST",
+  "headers": {
+    "Accept": "*/*",
+    "Accept-Encoding": "gzip, deflate, br",
+    "Accept-Language": "en-US,en;q=0.8,pt;q=0.6",
+    "Cache-Control": "no-cache",
+    "CloudFront-Forwarded-Proto": "https",
+    "CloudFront-Is-Desktop-Viewer": "true",
+    "CloudFront-Is-Mobile-Viewer": "false",
+    "CloudFront-Is-SmartTV-Viewer": "false",
+    "CloudFront-Is-Tablet-Viewer": "false",
+    "CloudFront-Viewer-Country": "BR",
+    "Content-Type": "application/json",
+    "Host": "tpx8el7z26.execute-api.us-east-1.amazonaws.com",
+    "Origin": "chrome-extension://fhbjgbiflinjbdggehcddcbncdddomop",
+    "Postman-Token": "3c56f084-a14a-2bec-c8b5-0b5dac6882ad",
+    "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.116 Safari/537.36",
+    "Via": "1.1 2536512acf782b64eb7d851771cec647.cloudfront.net (CloudFront)",
+    "X-Amz-Cf-Id": "b_wUJQgti7Idq-RXz4KCI9uXV7EU5HYwGdRytenciJl9TsgP89wPCg==",
+    "X-Forwarded-For": "186.231.101.217, 54.239.182.118",
+    "X-Forwarded-Port": "443",
+    "X-Forwarded-Proto": "https"
+  },
+  "requestContext": {
+    "accountId": "063951657828",
+    "resourceId": "kemrir",
+    "stage": "dev",
+    "requestId": "42ee6449-97ab-11e6-be81-5d2d274cf9e0",
+    "identity": {
+      "cognitoIdentityPoolId": null,
+      "accountId": null,
+      "cognitoIdentityId": null,
+      "caller": null,
+      "apiKey": null,
+      "sourceIp": "186.231.101.217",
+      "cognitoAuthenticationType": null,
+      "cognitoAuthenticationProvider": null,
+      "userArn": null,
+      "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.116 Safari/537.36",
+      "user": null
+    },
+    "resourcePath": "/v1/item",
+    "httpMethod": "POST",
+    "apiId": "tpx8el7z26"
+  }
+}

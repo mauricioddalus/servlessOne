@@ -1,0 +1,106 @@
+service: apiServlessOne
+
+provider:
+  name: aws
+  runtime: nodejs4.3
+  region: us-east-1
+  stage: dev
+
+  db_test: 'test_table'
+
+#Roles 
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - "dynamodb:*"
+      Resource: [
+        { "Fn::Join": [ ":", [
+              "arn:aws:dynamodb",
+              { "Ref": "AWS::Region" },
+              { "Ref": "AWS::AccountId" },
+              "table/${self:provider.db_test}"
+            ] ] },
+        { "Fn::Join": [ ":",[
+              "arn:aws:dynamodb",
+              { "Ref": "AWS::Region" },
+              { "Ref": "AWS::AccountId" },
+              "table/${self:provider.db_test}/*"
+            ] ] }
+      ]
+    - Effect: "Allow"
+      Action:
+        - "s3:ListBucket"
+      Resource: { "Fn::Join" : ["", ["arn:aws:s3:::", { "Ref" : "ServerlessDeploymentBucket" } ] ]  }
+    - Effect: "Allow"
+      Action:
+        - "s3:PutObject"
+      Resource:
+        Fn::Join:
+          - ""
+          - - "arn:aws:s3:::"
+            - "Ref" : "ServerlessDeploymentBucket"
+
+functions:
+# ENDPOINT ${stage}/v1/item
+  createItem:
+    name: ${self:provider.stage}-createItem
+    handler: resources/item/insert.create
+    memorySize: 128 
+    timeout: 10
+    events:
+      - http:
+          path: v1/item
+          method: post
+
+# ENDPOINT ${stage}/v1/{itemId}
+  updateItem:
+    name: ${self:provider.stage}-updateItem
+    handler: resources/item/insert.update
+    memorySize: 128 
+    timeout: 10
+    events:
+      - http:
+          path: v1/{itemId}
+          method: put
+
+  getItem:
+    name: ${self:provider.stage}-getItem
+    handler: resources/item/get.main
+    memorySize: 128 
+    timeout: 10
+    events:
+      - http:
+          path: v1/{itemId}
+          method: get
+
+  deleteItem:
+    name: ${self:provider.stage}-deleteItem
+    handler: resources/item/delete.main
+    memorySize: 128 
+    timeout: 10
+    events:
+      - http:
+          path: v1/{itemId}
+          method: delete
+
+# ENDPOINT ${stage}/v1/items
+  getItems:
+    name: ${self:provider.stage}-getItems
+    handler: resources/items/get.main
+    memorySize: 128
+    timeout: 10
+    events:
+      - http:
+          path: v1/items
+          method: get
+
+# you can add CloudFormation resource templates here
+#resources:
+#  Resources:
+#    ThumbnailsBucket:
+#      Type: AWS::S3::Bucket
+#      Properties:
+         # You can also set properties for the resource, based on the CloudFormation properties
+#         BucketName: my-new-crazy-bucket
+         # Or you could reference an environment variable
+         # BucketName: ${env:BUCKET_NAME}

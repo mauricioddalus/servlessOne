@@ -1,0 +1,17 @@
+{
+  "name": "api-servless-1",
+  "version": "1.0.0",
+  "description": "api de teste usando serveless 1",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "@mauriciottc",
+  "license": "ISC",
+  "dependencies": {
+    "dynamodb-data-types": "^3.0.0",
+    "jsonschema": "^1.1.0",
+    "node-uuid": "^1.4.7",
+    "underscore": "^1.8.3"
+  }
+}
