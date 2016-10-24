@@ -1,18 +1,15 @@
 {
-  "body": {
-      "nome" : "leonardo",
-      "idade": 30
-  },
+  "body": {},
   "queryStringParameters": null,
   "pathParameters": {
-      "id": "44454e75-ac40-415f-b154-3dee80891a70"
+      "id": "0c1885ff-bfde-42db-abcc-1815427691c7"
   },
   "stageVariables": {
     "db_test": "test-table"
   },
   "resource": "/v1/item",
   "path": "/v1/item",
-  "httpMethod": "PUT",
+  "httpMethod": "DELETE",
   "headers": {
     "Accept": "*/*",
     "Accept-Encoding": "gzip, deflate, br",
@@ -54,7 +51,7 @@
       "user": null
     },
     "resourcePath": "/v1/item",
-    "httpMethod": "PUT",
+    "httpMethod": "DELETE",
     "apiId": "tpx8el7z26"
   }
 }

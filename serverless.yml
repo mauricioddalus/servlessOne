@@ -6,7 +6,19 @@ provider:
   region: us-east-1
   stage: dev
 
-  db_test: 'test_table'
+  db_test: test_table
+  version: v1
+
+package:
+  exclude:
+    - .git
+    - .gitignore
+    - resources/items/.json
+    - resources/item/.json
+    - serverless-doc.md
+    - serverless*
+    - test/**
+    - node_modules/**
 
 #Roles 
   iamRoleStatements:
@@ -41,58 +53,60 @@ provider:
             - "Ref" : "ServerlessDeploymentBucket"
 
 functions:
-# ENDPOINT ${stage}/v1/item
+  # ENDPOINT ${stage}/${version}/items
   createItem:
-    name: ${self:provider.stage}-createItem
-    handler: resources/item/insert.create
+    name: ${self:service}-${self:provider.stage}-createItem
+    description: Função para criação de items em ambiente de ${self:provider.stage}
+    handler: resources/items/post.main
     memorySize: 128 
     timeout: 10
     events:
       - http:
-          path: v1/item
-          method: post
+          path: ${self:provider.stage}/${self:provider.version}/items
+          method: POST
 
-# ENDPOINT ${stage}/v1/{itemId}
-  updateItem:
-    name: ${self:provider.stage}-updateItem
-    handler: resources/item/insert.update
-    memorySize: 128 
-    timeout: 10
-    events:
-      - http:
-          path: v1/{itemId}
-          method: put
-
-  getItem:
-    name: ${self:provider.stage}-getItem
-    handler: resources/item/get.main
-    memorySize: 128 
-    timeout: 10
-    events:
-      - http:
-          path: v1/{itemId}
-          method: get
-
-  deleteItem:
-    name: ${self:provider.stage}-deleteItem
-    handler: resources/item/delete.main
-    memorySize: 128 
-    timeout: 10
-    events:
-      - http:
-          path: v1/{itemId}
-          method: delete
-
-# ENDPOINT ${stage}/v1/items
   getItems:
-    name: ${self:provider.stage}-getItems
+    name: ${self:service}-${self:provider.stage}-getItems
+    description: Função para retorno de items em ambiente de ${self:provider.stage}
     handler: resources/items/get.main
     memorySize: 128
     timeout: 10
     events:
       - http:
-          path: v1/items
+          path: ${self:provider.stage}/${self:provider.version}/items
+          method: GET
+
+  # ENDPOINT ${stage}/${version}/items/{itemId}
+  updateItem:
+    name: ${self:service}-${self:provider.stage}-updateItem
+    handler: resources/item/update.main
+    memorySize: 128 
+    timeout: 10
+    events:
+      - http:
+          path: ${self:provider.stage}/${self:provider.version}/items/{itemId}
+          method: put
+
+  getItem:
+    name: ${self:service}-${self:provider.stage}-getItem
+    handler: resources/item/get.main
+    memorySize: 128 
+    timeout: 10
+    events:
+      - http:
+          path: ${self:provider.stage}/${self:provider.version}/items/{itemId}
           method: get
+
+  deleteItem:
+    name: ${self:service}-${self:provider.stage}-deleteItem
+    handler: resources/item/delete.main
+    memorySize: 128 
+    timeout: 10
+    events:
+      - http:
+          path: ${self:provider.stage}/${self:provider.version}/items/{itemId}
+          method: delete
+
 
 # you can add CloudFormation resource templates here
 #resources:

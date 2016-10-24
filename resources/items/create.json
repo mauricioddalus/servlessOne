@@ -4,15 +4,13 @@
       "idade": 30
   },
   "queryStringParameters": null,
-  "pathParameters": {
-      "id": "44454e75-ac40-415f-b154-3dee80891a70"
-  },
+  "pathParameters": { },
   "stageVariables": {
     "db_test": "test-table"
   },
   "resource": "/v1/item",
   "path": "/v1/item",
-  "httpMethod": "PUT",
+  "httpMethod": "POST",
   "headers": {
     "Accept": "*/*",
     "Accept-Encoding": "gzip, deflate, br",
@@ -54,7 +52,7 @@
       "user": null
     },
     "resourcePath": "/v1/item",
-    "httpMethod": "PUT",
+    "httpMethod": "POST",
     "apiId": "tpx8el7z26"
   }
 }

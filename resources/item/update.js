@@ -5,7 +5,7 @@ const httpStatus = require('../../util/httpStatus');
 const validation = require('../../util/validation');
 
 module.exports.main = (event, context, callback) => {
-  validation.validateEvent(event, context, schema.getItem);
+  validation.validateEvent(event, context, schema.updateItem);
 
   const doCallback = (status, data) => {
     return context.succeed({
@@ -16,11 +16,17 @@ module.exports.main = (event, context, callback) => {
   };
 
   Item.configure(event, context);
-  Item.getItem()
-    .then(data => {
-      doCallback(200, data);
-    })
-    .catch(err => {
-      doCallback(400, err);
-    });
+  Item.getItem().then(oldItem => {
+    let newItem = new Item(oldItem);
+    newItem.idade = 50;
+    newItem.update(newItem)
+      .then(data => {
+        doCallback(200, data);
+      })
+      .catch(err => {
+        doCallback(400, err);
+      });
+  }).catch(err => {
+    doCallback(400, err);
+  });  
 };

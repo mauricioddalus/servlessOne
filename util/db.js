@@ -55,7 +55,7 @@ exports.getItem = (tableName, itemId, categoryId) => {
  */
 exports.createItem = (tableName, item) => {
     let resource = _.clone(item);
-    resource.id  = uid.v4();
+    resource.id  = uuid.v4();
     resource     = attr.wrap(resource);
 
     return new Promise((resolve, reject) => {
@@ -92,6 +92,32 @@ exports.listItems = (tableName) => {
                     itemList.push(toJson(item));
                 });
                 resolve(itemList);
+            }
+        });
+    });
+};
+
+/**
+ * @param {string} tableName
+ * @param {string} itemId
+ * @returns {Promise<{}>}
+ */
+exports.deleteItem = (tableName, itemId) => {
+    return new Promise((resolve, reject) => {
+        let params = {};
+        params.TableName = tableName;
+        params.Key = {
+            "id": attr.wrap1(itemId)
+        };
+        params.ReturnValues = "ALL_OLD";
+        //console.log('params: ' + JSON.stringify(params, null, '\t'));
+        dynamo.deleteItem(params, function (err, data) {
+            if (err) {
+                //console.log('err: ', err);
+                reject(err);
+            } else {
+                console.log('data: ', data);
+                resolve((_.isEmpty(data) ? data : toJson(data.Attributes)));
             }
         });
     });

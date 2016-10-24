@@ -13,5 +13,9 @@
     "jsonschema": "^1.1.0",
     "node-uuid": "^1.4.7",
     "underscore": "^1.8.3"
+  },
+  "jshintConfig": {
+    "esversion": 6,
+    "node": true
   }
 }

@@ -3,9 +3,9 @@ const db         = require('../util/db');
 const schema     = require('../util/schema');
 const validation = require('../util/validation');
 
-const table_item;
-const context;
-const event;
+let table_item;
+let context;
+let event;
 
 class Item {
   static configure(evnt, cont){
@@ -27,6 +27,10 @@ class Item {
 
   static get() {
     return db.getItem(table_item, event['pathParameters'].id);
+  }
+
+  static delete() {
+    return db.deleteItem(table_item, event['pathParameters'].id);
   }
 
   update(newBody){

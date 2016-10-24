@@ -12,7 +12,7 @@ exports.stageVariables = {
     "additionalProperties": true
 };
 
-//CATEGORY
+//ITEM
 exports.item = {
     "id": "/Item",
     "type": "object",
@@ -40,14 +40,20 @@ exports.getItems = {
     "additionalProperties": true
 };
 
-exports.createItem = {
-    "id"  : "/GetItems",
+exports.getItem = {
+    "id"  : "/GetItem",
     "type": "object",
     "properties": {
         "header": {
             "type": "object",
             "properties":{
                 "Content-Type": {"type": "string","pattern":"application/json"}
+            }
+        },
+        "pathParameters":{
+            "type": "object",
+            "properties":{
+                "id": {"type": "string", "pattern":uuidPattern}
             }
         },
         "stageVariables": {"$ref": "/StageVariables"}
@@ -56,8 +62,8 @@ exports.createItem = {
     "additionalProperties": true
 };
 
-exports.createItem = {
-    "id"  : "/GetItems",
+exports.deleteItem = {
+    "id"  : "/GetItem",
     "type": "object",
     "properties": {
         "header": {
@@ -66,12 +72,51 @@ exports.createItem = {
                 "Content-Type": {"type": "string","pattern":"application/json"}
             }
         },
-        "pathParameters": {
+        "pathParameters":{
             "type": "object",
             "properties":{
-                "id": {"type": "string","pattern": uuidPattern}
+                "id": {"type": "string", "pattern":uuidPattern}
             },
-            "required": ["id"] 
+            "required": ["id"]
+        },
+        "stageVariables": {"$ref": "/StageVariables"}
+    },
+    "required": ["stageVariables","pathParameters"],
+    "additionalProperties": true
+};
+
+exports.updateItem = {
+    "id"  : "/updateItem",
+    "type": "object",
+    "properties": {
+        "header": {
+            "type": "object",
+            "properties":{
+                "Content-Type": {"type": "string","pattern":"application/json"}
+            }
+        },
+        "pathParameters":{
+            "type": "object",
+            "properties":{
+                "id": {"type": "string", "pattern":uuidPattern}
+            },
+            "required": ["id"]
+        },
+        "stageVariables": {"$ref": "/StageVariables"}
+    },
+    "required": ["stageVariables","pathParameters"],
+    "additionalProperties": true
+};
+
+exports.createItem = {
+    "id"  : "/CreateItem",
+    "type": "object",
+    "properties": {
+        "header": {
+            "type": "object",
+            "properties":{
+                "Content-Type": {"type": "string","pattern":"application/json"}
+            }
         },
         "stageVariables": {"$ref": "/StageVariables"}
     },
