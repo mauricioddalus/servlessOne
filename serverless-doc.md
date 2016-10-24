@@ -138,233 +138,154 @@ Recomenda-se a seguinte hierarquia de pastas:
 
 ### 2.2. Configurando um projeto de um repositório clonado
 
-Execute o comando abaixo, no diretório do projeto:
-
-```shell
-serverless project init -n <nome do projeto> -s <estágio> -r <região> -c
-```
-
-Onde:
-
-* **nome do projeto**: nome que aparecerá no API Gateway. Pode-se usar um
-    nome de projeto existente para continuar um desenvolvimento.
-
-* **estágio**: o estágio que estará sendo desenvolvido.
-
-* **região**: região onde será realizado a implementação.
-
-Crie as variáveis do projeto:
-
-```shell
-serverless variables set -t <tipo> -r <região> -s <estágio> -k <key> -v <value>
-```
-
-Onde:
-
-* **tipo**: tipo da varipavel, que pode ser: common, stage ou region.
-
-* **região**: região onde será realizado a implementação.
-
-* **estágio**: o estágio que estará sendo desenvolvido.
-
-* **key**: nome da variável.
-
-* **value**: valor da variável.
+Não é necessária a instalação do projeto após o clone na versão 1.0.X do Serverless, apenas é necessária
+a verificação de variáveis de ambiente `${env:variavel}` e variáveis de linha de comando `${opt:variavel}` 
+no arquivo de configuração do serverless `serverless.yml`.
 
 
-## 3. Operações com o serverless
+## 3. Configurando o serverless
 
-### 3.1. Criando um novo estágio
+As configurações são feitas no arquivo serverless.yml.
 
-Execute o comando abaixo para criar um novo estágio:
+### 3.1. Configurações básicas
 
-```shell
-serverless project init -n <nome do projeto> -s <estágio> -r <região> -c
-```
+    service: <nome da api>
 
-Onde:
+    provider:
+    name: aws
+    runtime: <tipo de execução 'nodejs 4.3', 'python'>
+    region:  <região 'us-east-1 '>
+    stage:   <estágio 'dev','test','prod' >
 
-* **nome do projeto**: nome que aparecerá no API Gateway, o mesmo nome já
-    sendo utilizado para criar um novo estágio no mesmo API Gateway.
+    #Variáveis
+    db_test: test_table 
+    version: v1
 
-* **estágio**: o estágio que estará sendo desenvolvido.
+    # define os diretórios/arquivos que não serão incluidos no pacote .zip
+    package:
+    exclude:
+        - .git
+        - .gitignore
+        - resources/items/.json
+        - resources/item/.json
+        - serverless-doc.md
+        - serverless*
+        - test/**
+        - node_modules/**
 
-* **região**: região onde será realizado a implementação. Utilizar o mesmo dos
-    outros estágios.
 
 
 ### 3.2. Criando uma nova função Lambda
 
-Executar o comando:
+A criação de funções é manual, dois arquivos devem ser criados dentro de uma nova pasta no diretório functions
 
-```shell
-serverless function create -r nodejs4.3 -t endpoint functions/<nome_da_função>
-```
+`função.js`   Contem a função que será executada pelo lambda
+`evento.json` Contem os parametros que serão enviados para a função no `sls invoke`
 
-Modificar o arquivo **s-function.json** criado de acordo com a necessidade do
-projeto, com atenção à:
+    Exemplo de projeto:
 
-* description
-
-* handler
-
-    O **handler** deverá ser baseado no diretório da função. Adicionar o diretório
-    da função no **handler**.
-  
-    Por exemplo, se a hierarquia ficou:
-    
         root/
         |
         +-- functions/
               +-- MyFunction/
-                  +-- handler.js
-  
-    **handler** deverá ser: `MyFunction/handler.handler`
+                  +-- evento.json
+                  +-- função.js
 
-* timeout
+Conteudo do arquivo função.js:
+    
+    'use strict';
 
-* memorySize
+    module.exports.main = (event, context, callback) => {
+
+        return context.succeed({
+            "statusCode": 200,
+            "headers": { "Content-type": "application/json" },
+            "body": JSON.stringify('ok')
+        });
+    };
+
+Após a criação da função é necessário configurar o Serverless `serverless.yml` para identificar as novas funções:
+
+    functions:
+    MyFunction:
+        name: ${self:service}-${self:provider.stage}-myFunction
+        description: Função para criação de items em ambiente de ${self:provider.stage}
+        handler: MyFunction/função.main
+        memorySize: 128 
+        timeout: 10
+        events:
+        - http:
+            path: ${self:provider.stage}/${self:provider.version}/items
+            method: POST
+
 
 ### 3.3. Testes da função Lambda
 
-Teste local poderá ser feito com o comando
+O Serverless 1.0.2 não possue teste local, é necessário fazer o deploy e então executar o comando invoke 
 
 ```shell
-serverless function run <nome_da_função>
+serverless deploy -f <nome_da_função>
+```
+
+```shell
+serverless invoke -f <nome_da_função> 
 ```
 
 Observação: o teste será executado com as suas credenciais, de acordo com o
 perfil especificado na criação do projeto.
+
+Para contornar o problema foi recomendada a instalação do pacote npm `ws-lambda-local` que possibilita a execução local das funções lambda:
+
+```shell
+lambda-local -f <caminho/nome_da_função>  -e <caminho/nome_do_evento>
+```
 
 ### 3.4. Permissões para função Lambda
 
 Se a função Lambda precisa acessar algum serviço da Amazon AWS, a permissão
 para acesso deverá estar configurado na Role da função Lambda.
 
-Esta configuração é realizada no arquivo `s-resources-cf.json`, que contém
+Esta configuração é realizada no arquivo `serverless.yml`, que contém
 o modelo CloudFormation para o projeto.
 
-O item **IamPolicyLambda** contém as autorizações de acesso para as funções
-Lambda do projeto.
-
-Uma autorização padrão é o acesso ao banco de dados configurado no DynamoDB.
-Esta permissão pode ser configurado com um **statement** adicional no 
-**IamPolicyLambda**, com o seguinte formato:
-
-    {
-        "Effect": "Allow",
-        "Action": ["dynamodb:*"],
-        "Resource": [
-            {"Fn::Join": [":", ["arn:aws:dynamodb", {"Ref": "AWS::Region"}, {"Ref": "AWS::AccountId"}, "table/<nome_tabela>"]]},
-            {"Fn::Join": [":", ["arn:aws:dynamodb", {"Ref": "AWS::Region"}, {"Ref": "AWS::AccountId"}, "table/<nome_tabela>/*"]]},
-            ...
+      iamRoleStatements:
+        - Effect: "Allow"
+        Action:
+            - "dynamodb:*"
+        Resource: [
+            { "Fn::Join": [ ":", [
+                "arn:aws:dynamodb",
+                { "Ref": "AWS::Region" },
+                { "Ref": "AWS::AccountId" },
+                "table/${self:provider.db_test}"
+                ] ] },
+            { "Fn::Join": [ ":",[
+                "arn:aws:dynamodb",
+                { "Ref": "AWS::Region" },
+                { "Ref": "AWS::AccountId" },
+                "table/${self:provider.db_test}/*"
+                ] ] }
         ]
-    }    
 
-Onde:
-
-* **<nome_tabela>** é o nome da base no DynamoDB que será utilizada. Exemplo: 
-    `dev_brands`.
-
-As 2 linhas de definições de tabela devem ser repetidas para todas as tabelas
-de todos os estágios, por exemplo, para as tabelas `dev_brands` e 
-`test_brands`. 
-
-Ao ser realizado alguma alteração no `s-resources-cf.json`, deve-se aplicar a
+Ao ser realizado alguma alteração no arquivo, deve-se aplicar a
 alteração na Amazon, com o comando:
 
 ```shell
-serverless resources deploy
+serverless deploy
 ```
 
 ### 3.5. Instalação da função Lambda na AWS
 
 ```shell
-serverless function deploy <nome_da_função>
+serverless deploy -f <nome_da_função>
 ```
 
-### 3.6. Deploy do API Gateway
+### 3.6. Definindo variáveis
 
-Verificar os seguintes itens no arquivo **s-function.json**:
+As váriaveis podem possuem 3 tipos
 
-* endpoints[0].path
+* **Variáveis de ambiente**: ${env:variavel} é definida no perfil do usuário `export variavel='valor'`
 
-    O **path** é em relação ao estágio que será criado no futuro.
+* **Variáveis do CLI**: ${opt:variavel} é definida na chamada do serverless: `sls deploy --variavel valor`
 
-* endpoints[0].method
-
-* endpoints[0].requestParameters
-
-    Verificar os valores em <https://docs.aws.amazon.com/apigateway/api-reference/resource/method/#requestParameters>.
-
-* endpoints[0].requestModels
-
-    Verificar os valores em <https://docs.aws.amazon.com/apigateway/api-reference/resource/method/#requestModels>.
-
-* endpoints[0].requestTemplates
-
-    Verificar os valores em <https://docs.aws.amazon.com/apigateway/api-reference/resource/integration/#requestTemplates>.
-
-    Pode ser em JSON.
-
-* endpoints[0].responses
-
-* endpoints[0].responses.*.statusCode
-
-* endpoints[0].responses.*.responseParameters
-
-    Verificar os valores em <https://docs.aws.amazon.com/apigateway/api-reference/resource/method-response/#responseParameters>.
-
-* endpoints[0].responses.*.responseModels
-
-    Verificar os valores em <https://docs.aws.amazon.com/apigateway/api-reference/resource/method-response/#responseModels>.
-
-* endpoints[0].responses.*.responseTemplates
-
-    Verificar os valores em <https://docs.aws.amazon.com/apigateway/api-reference/resource/integration-response/#responseTemplates>.
-
-    Pode ser em JSON.
-
-Observações:
-
-* Os modelos deverão ser criados manualmente no API Gateway antes do deploy
-
-* requestTemplates é o mapeamento da entrada para o **event** do Lambda
-
-* responseTemplates é o mapeamento do resultado do Lambda para o retorno do
-  http
-
-* É recomendado a criação dos templates no arquivo **s-templates.json** na raiz
-  do projeto e referenciá-los com `$${nome_do_template}`.
-
-Para realizar o deploy do endpoint:
-
-```shell
-serverless endpoint deploy <path>~<method>
-```
-
-* **path**: o path na URL da função, como definido em `endpoints[0].path`
-
-* **method**: o método, como definido em `endpoints[0].method`
-
-### 3.7. Definindo variáveis
-
-Algumas variáveis podem ser definidas nos arquivos de metadados
-correspondentes.
-
-Os arquivos de definição de variáveis encontram-se em:
-
-    _meta/variables
-
-Os seguintes arquivos existem:
-
-* **s-variables-common.json**: para definir variáveis a serem utilizadas em
-    qualquer estágio e região
-
-* **s-variables-<estágio>.json**: para definir variáveis a serem utilizadas somente
-    no estágio especificado
-
-* **s-variables-<estágio>-<região>.json**: para definir variáveis a serem utilizadas
-    somente no estágio e região espeficados. <região> não contem os '-', i.e.
-    us-east-1 = useast1
-
+* **Variáveis Custom**: ${self:variavel} é definida dentro do `serverless.yml` 
